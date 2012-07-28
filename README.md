@@ -9,9 +9,7 @@ Using OpenNLP, Clojure, and clojure-opennlp, incanter.
 ## Create training script (sensitive data is stored in a private repository)
 TODO: Following are not working or do not work good enough:
 
-* CommitHash (produces nothing)
-* MessageArg (produces nothing)
-* File (if a file extension exists the line gets split -- needs to be one line)
+* MessageArg (produces nothing -- gotta deal with the variability of messages people pass to the logs)
 
 The file created by this script are to be used as training files to build models with OpenNLP libraries.
 

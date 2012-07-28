@@ -8,7 +8,7 @@ MODEL_REGEX = Hash[
   :processid => '<START:processid>\s\d{2,14}\s<END>',
   :commithash => '<START:commithash>\s.{5,10}\s<END>',
   :processenv => '<START:processenv>\s\w{4,}\s<END>',
-  :file => '<START:file>\s\w{2,}\/\w{2,}|(\.\w{1,}:\d{1,})\s<END>',
+  :file => '<START:file>\s\w{2,}\/\w{2,}(\.\w{1,}:\d{1,})*\s<END>',
   ## message are will return this (<START:messagearg> POST Data  <END>, <END>, ) ## Need to clean this again
   :messagearg => '<START:messagearg>.+<END>,\s',
   :attributes => '<START:attributes>\s.+<END>'
