@@ -15,17 +15,26 @@
 #ARGV.each.map{|i| params[i.to_sym] = i}
 
 REGEX_BASE = 'grep -P -o'
+FIND_ALL = '(.+?)'
 MODEL_REGEX = Hash[
-  :loglevel => '<START:loglevel>\s\w\s<END>',
-  :timestamp => '<START:timestamp>\s\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\s<END>',
-  :processid => '<START:processid>\s\d{2,14}\s<END>',
-  :commithash => '<START:commithash>\s.{5,10}\s<END>',
-  :processenv => '<START:processenv>\s\w{4,}\s<END>',
-  :file => '<START:file>\s\w{2,}\/\w{2,}(\.\w{1,}:\d{1,})*\s<END>',
+  # This is iffy becuase it is just a few Capital Letters
+  :loglevel => "<START:loglevel>#{FIND_ALL}<END>",
+  # use OpenNLP's ner for timestamps, or roll my own, but can't create them
+  # from log training data
+  #:timestamp => "<START:timestamp>#{FIND_ALL}<END>",
+  # This is problematic because its just sequences of integers
+  :processid => "<START:processid>#{FIND_ALL}<END>",
+  # This is problematic becuase its just sequences of characters
+  :commithash => "<START:commithash>#{FIND_ALL}<END>",
+  :processenv => "<START:processenv>#{FIND_ALL}<END>",
+  :file => "<START:file>#{FIND_ALL}<END>",
   ## message are will return this (<START:messagearg> POST Data  <END>, <END>, ) ## Need to clean this again
-  :messagearg => '<START:messagearg>.+<END>,\s',
-  :attributes => '<START:attributes>\s.+<END>'
+  :messagearg => "<START:messagearg>#{FIND_ALL}<END>",
+  :attributes => "<START:attributes>#{FIND_ALL}<END>",
+  :deploy_path => "<START:deploypath>#{FIND_ALL}<END>",
+  :exception_class => "<START:exceptionclassmessage>#{FIND_ALL}<END>"
 ]
+
 PROMPT_PARAMS = {}
 PROMPT_PARAMS[:file_in] = ARGV[0]
 PROMPT_PARAMS[:train_dir] = ARGV[1]
