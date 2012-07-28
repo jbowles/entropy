@@ -1,8 +1,18 @@
 #!/usr/bin/env ruby
 
 # Run it like this:
-#ruby create_training_file.rb <FILE TO READ FROM> <TRAINING DIRECTORY> <REGULAR EXPRESSION FINGER> <TRAINING FILE NAME>
+#ruby create_training_file.rb <FILE TO READ FROM> <TRAINING DIRECTORY> <REGULAR EXPRESSION FINDER> <TRAINING FILE NAME>
 #ruby create_training_file.rb logfile.log         training             timestamp                   timestamp
+
+# Actual usage
+# ruby create_training_file.rb input_files/testlog.log ls_train timestamp timestamp
+
+# Script will execute something like this:
+#grep -P -o '<START:timestamp>\s\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\s<END>' input_files/testlog > ls_train/timestamp.train
+
+#stdin arguments to k-v hash
+#params = {}
+#ARGV.each.map{|i| params[i.to_sym] = i}
 
 REGEX_BASE = 'grep -P -o'
 MODEL_REGEX = Hash[
@@ -23,10 +33,14 @@ PROMPT_PARAMS[:regular_expression] = ARGV[2]
 PROMPT_PARAMS[:train_file_name] = ARGV[3]
 #stdin arguments to k-v hash
 
-def create_train
- #`#{REGEX_BASE} '#{TIMESTAMP}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train`
- puts "#{REGEX_BASE} '#{MODEL_REGEX[PROMPT_PARAMS[:regular_expression].to_sym]}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train"
+def create_train(test=true)
+  if test
+    puts "#{REGEX_BASE} '#{MODEL_REGEX[PROMPT_PARAMS[:regular_expression].to_sym]}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train"
+  else
+    `#{REGEX_BASE} '#{MODEL_REGEX[PROMPT_PARAMS[:regular_expression].to_sym]}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train`
+  end
 end
 
-create_train
+
+ARGV[4].nil? ? create_train : create_train(test=false)
 

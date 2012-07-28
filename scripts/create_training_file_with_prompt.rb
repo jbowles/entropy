@@ -29,6 +29,9 @@ def command_prompt
   puts "Write the name of the training file (EX: timestamp -- I suggest the name of the model you selected):"
   print PROMPTER
   PROMPT_PARAMS[:train_file_name] = STDIN.gets.chomp()
+  puts "Write OUTPUT if you want to see the command (but not run it), othwerwise hit return to run it:"
+  print PROMPTER
+  PROMPT_PARAMS[:runit] = STDIN.gets.chomp()
   #confirm = <<-MESSAGE
   #I will create the training file #{PROMPT_PARAMS[:train_file_name]} 
   #in #{PROMPT_PARAMS[:train_dir]} 
@@ -39,10 +42,13 @@ def command_prompt
   #puts PROMPT_PARAMS
 end
 
-def create_train
- #`#{REGEX_BASE} '#{TIMESTAMP}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train`
- puts "#{REGEX_BASE} '#{MODEL_REGEX[PROMPT_PARAMS[:regular_expression].to_sym]}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train"
+def create_train(test=true)
+  if test
+    puts "#{REGEX_BASE} '#{MODEL_REGEX[PROMPT_PARAMS[:regular_expression].to_sym]}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train"
+  else
+    `#{REGEX_BASE} '#{MODEL_REGEX[PROMPT_PARAMS[:regular_expression].to_sym]}' #{PROMPT_PARAMS[:file_in]} > #{PROMPT_PARAMS[:train_dir]}/#{PROMPT_PARAMS[:train_file_name]}.train`
+  end
 end
 
 command_prompt
-create_train
+!PROMPT_PARAMS[:runit].empty? ? create_train : create_train(test=false)
