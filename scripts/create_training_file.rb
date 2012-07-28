@@ -43,4 +43,3 @@ end
 
 
 ARGV[4].nil? ? create_train : create_train(test=false)
-
