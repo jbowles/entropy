@@ -6,24 +6,8 @@ I'm assuming that no boilerplate training data will work across different applic
 ## Dependencies
 Using OpenNLP, Clojure, and clojure-opennlp, incanter.
 
-## Create training script (sensitive data is stored in a private repository)
-TODO: Following are not working or do not work good enough:
-
-* MessageArg (produces nothing -- gotta deal with the variability of messages people pass to the logs)
-
-The file created by this script are to be used as training files to build models with OpenNLP libraries.
-
-You can run the script in one of two ways. Pass arguments through the command line or use a command line prompt. They both take the same arguments, here is what the command line option looks like:
-
-```ssh
-ruby create_training_file.rb <FILE TO READ FROM> <TRAINING DIRECTORY> <REGULAR EXPRESSION FINDER> <TRAINING FILE NAME>
-
-ruby create_training_file.rb input_files/testlog.log ls_train timestamp timestamp
-grep -P -o '<START:timestamp>\s\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\s<END>' input_files/testlog > ls_train/timestamp.train
-```
-
-What this does is search the logs and pull out the necessary pieces of entity tags I embedded in the production logs. We'll then use these files to build some entity extraction models, once these are built we can build some finer grained models. 
-FIXME: write
+## Training
+See the training directory (a private repo) for information on how training sets were created. These training sets were used to generate the binary model files.
 
 ## License
 
