@@ -1,6 +1,6 @@
 ;; Credit: Lee Hinman (dakrone on github)
 ;; https://github.com/dakrone/clojure-opennlp
-(ns entropy.model-test
+(ns model-test
   (:use [clojure.pprint]
            [opennlp.nlp]
            [opennlp.treebank]

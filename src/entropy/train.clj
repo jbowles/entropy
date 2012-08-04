@@ -1,29 +1,32 @@
 (use 'opennlp.nlp)
 (use 'opennlp.tools.train)
 
-(def tokenize (make-tokenizer "models/en-token.bin"))
-(def date-find (make-name-finder "models/en-ner-date.bin"))
-(def time-find (make-name-finder "models/en-ner-time.bin"))
+
+(def sent-model (train-sentence-detector "training/input_files/testlog.train")
+
+;(def tokenize (make-tokenizer "models/en-token.bin"))
+;(def date-find (make-name-finder "models/en-ner-date.bin"))
+;(def time-find (make-name-finder "models/en-ner-time.bin"))
 
 ;; not working
 ;(def token-model (train-tokenizer "training/ls_train/token-timestamp.train"))
-(def token-model (train-tokenizer "training/ls_train/tokenizer.train"))
-(def tokenize-timestamp (make-tokenizer token-model))
-(tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church")
+;(def token-model (train-tokenizer "training/ls_train/tokenizer.train"))
+;(def tokenize-timestamp (make-tokenizer token-model))
+;(tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church")
 
 ;; not working right
-(def ner-model (train-name-finder "training/ls_train/timestamp_entities_split_files/ner-timestamp-xaa.train"))
-(def find-timestamp (make-name-finder ner-model))
-(find-timestamp (tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church"))
+;(def ner-model (train-name-finder "training/ls_train/timestamp_entities_split_files/ner-timestamp-xaa.train"))
+;(def find-timestamp (make-name-finder ner-model))
+;(find-timestamp (tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church"))
 ;; ("2007-07-30 03:50:53 Bein g a t th e poll s wa s jus t lik e bein g a t churc h"
-(find-timestamp (tokenize "2007-07-30 03:50:53 Being at the polls was just like being at church"))
+;(find-timestamp (tokenize "2007-07-30 03:50:53 Being at the polls was just like being at church"))
 ;;("2007-07-30 03:50:53 Bein g a t th e poll s wa s jus t lik e bein g a t churc h")
 
 ;;; trying other ways
-(date-find (tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church"))
-(time-find (tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church"))
-(date-find (tokenize "2007-07-30 03:50:53 Being at the polls was just like being at church"))
-(time-find (tokenize "2007-07-30 03:50:53 Being at the polls was just like being at church"))
+;(date-find (tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church"))
+;(time-find (tokenize-timestamp "2007-07-30 03:50:53 Being at the polls was just like being at church"))
+;(date-find (tokenize "2007-07-30 03:50:53 Being at the polls was just like being at church"))
+;(time-find (tokenize "2007-07-30 03:50:53 Being at the polls was just like being at church"))
 
 ;(def namefinder-model (train-name-finder "training/ls_train/named_org.train"))
 ;(def name-find (make-name-finder namefinder-model))
