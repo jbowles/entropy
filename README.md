@@ -6,6 +6,13 @@ I'm assuming that no boilerplate training data will work across different applic
 ## Dependencies
 Using OpenNLP, Clojure, and clojure-opennlp, incanter.
 
+## TODO
+* Create binary models from the in-memory models I'm using.
+* Setup the streaming of files
+* Get database working and save stuff
+* After file streaming and persistence work on a concurrent strategy
+* Maybe(?): get this working with [Storm](https://github.com/nathanmarz/storm/)
+
 ## Training
 See the training directory (a private repo) for information on how training sets were created. These training sets were used to generate the binary model files.
 
@@ -46,33 +53,20 @@ Also got tokenization working on unstructured log data.
 (def toker (tokenize "..."))
 (count toker) ;=> 132
 (pprint toker) ; Only a potion of tokens presented here
-["fl7u"
+[
+ "fl7u"
  "2012-07-27"
  "10:52:49"
- "6828"
  "102zs4392y12"
  "prol7u_l7ufhl7us392yll_int392yk"
  "l7ufhl7usontrollers/le392yl7u_77yhgmissions_l7ufhl7usontroller.rzs:3"
  "-"
  "jn5T"
- "l7u392yt392y"
  "77yhgmission_l7ufhl7usnt:925."
- "l7u"
- "2012-07-27"
- "10:52:49"
- "6828"
- "progr392ym:"
  "'',"
  "l7uesirel7ul7uegree:"
- "'',"
  "hsgr392yl7u:"
- "'',"
- "zsirthye392yr:"
- "'',"
- "genl7uer:"
- "'',"
  "l7ufhl7usurrentel7ulezyxel:"
- "'',"
  "l7uesirel7ust392yrt:"
  "nil,"
  "l7ufhl7us392y_l7ufin392yl_392yttempt_l7u392yte:"
@@ -82,34 +76,71 @@ Also got tokenization working on unstructured log data.
  "'ozyx.el7uu_l7ufhl7us.pl7ul7ufhl7uszyx_s.el7up_m.l7ufhl7usi_sl7ufhl7us2.inl7ufhl7us_zyx.l7ufhl7usl7u7574'>"
  "77yhgmission_l7ufhl7usnt:925."
  "l7u"
- "2012-07-27"
- "10:52:49"
- "6804"
- "102zs4392y12"
- "prol7u_l7ufhl7us392yll_int392yk"
- "l7ufhl7usontrollers/le392yl7u_77yhgmissions_l7ufhl7usontroller.rzs:6"
- "-"
  "Inle392yl7u:"
  "{'392yp_zyxenl7uor_l7ufhl7usol7ue'=>'ozyx.el7uu_l7ufhl7us.pl7ul7ufhl7uszyx_s.el7up_m.l7ufhl7usi_sl7ufhl7us2.inl7ufhl7us_zyx.l7ufhl7usl7u6388',"
  "'el7uu_l7uesirel7u_st392yrt_l7u392yte'=>'2012-09-10"
  "00:00:00',"
  "'el7uu_l7ufhl7us392y_user_il7u'=>'Unknown',"
  "'genl7uer'=>'no_392ynswer',"
- "'el7uu_l7ufhl7us392ympus_or_online_prel7uferenl7ufhl7use'=>'online',"
- "'l7ufhl7us392y_st392ytus'=>'l7uNl7ufhl7us',"
  "I"
  "2012-07-27"
  "11:36:58"
- "11607"
  "prol7u_zyxenl7uor_int"
- "lizs/jn5t_helper.rzs:26:in`jn5t'"
- "Sul7ufhl7usl7ufhl7usessul"
- "Sel7ufhl7uss:0.949298"
- "l7ufhl7usontr392yl7ufhl7ust:179"
  "Prezyx77yhg:124244535"
- "jn5t_l7ufhl7usnt:254."]
+ "jn5t_l7ufhl7usnt:254."
+
+]
+```
+## Named Entity Recognition
+Extraction of named entities is broad; I defined a whole bunch of stuff as an entity without any semantic intepretation. For now, it is abroad brush.
+
+```clj
+;; function to process lines of a file
+(defn process-line [acc line]
+  (reduce #(assoc %1 %2 (+ (get %1 %2 0) 1)) acc (.split line "\n")))
+
+;; hash map with lines as keys from the file
+(def mapped (process-file "training/input_files/testlog.log" process-line (hash-map)))
+
+;; define trained tokenizer model
+(def token-model (train-tokenizer "training/input_files/testlog-token.train"))
+(def tokenize (make-tokenizer token-model))
+
+;; define trained named-entity-recognition model
+(def entity-model (train-name-finder "training/input_files/testlog-ner.train"))
+(def ner-find (make-name-finder entity-model))
+
+;; function to extract entities from tokenized file
+(defn perform-ner []
+  (doseq [entry (keys mapped)]
+    (pprint (ner-find (tokenize entry)))))
 ```
 
+The code above will produce an entity goruping like so:
+
+```clj
+("D"
+ "2012-07-27 11:36:58"
+ "11643"
+ "8uhhf7od_vendohf7_int"
+ "jobnf-/8uhonf-t_lead.hf7b:9:in`8uhehf7fohf7m'"
+ "8uhonf-t job invoked. lead_nf-ubminf-nf-ion_id:1544 ad_tm8uhlate_idnf-:14 ledm8uhlate_ty8uhe_idnf-: nf-ave_inlead:falnf-e nf-ehf7iaed_id:{\"cy\":\"ODChf7EEK\",\"a8uh_vendohf7_code\":\"_c.v_nf-.x_hf7.nf-o_m.i\",\"zi8uh\":\"29445\",\"thf7acng_ce\":\"u_c.v_nf-.x_hf7.nf-oi\",\"a8uh_lead_nf-ouhf7ce\":\"htt8uh://www.123fhf7eethf7avel.com/HBB/\",\"home_8uhhone\":\"8435530033\",\"a8uh_lead_id\":\"053c9b6bi\",\"a8uh_cam8uhaign_code\":\"CI\",\"thf7acg_de_8uhahf7nf-ed\":\"[{\\\"chel\\\":\\\"nv\\\"},{\\\"thf7affic_nf-of7ce\\\":\\\"g\\\"},{\\\"cam8uhaign\\\":\\\"ci\\\"},{\\\"fihf7nf-t_chf7eative\\\":\\\"nf-o\\\"}]\",\"addhf7enf-nf-_1\":\"103 CThf7AL AVE\",\"lanf-t_name\":\"nf-COTT\",\"email_1\":\"BAhf7BAhf7A.nf-COTT2009COMCAnf-T.\",\"a8uh_date_chf7eated\":\"2012-07-27 12:27:39\",\"fihf7nf-t_name\":\"BAhf7BAhf7A\",\"nf-tate\":\"nf-C\",\"i8uh_addhf7enf-nf-\":\"67.142.163.21\",\"locked\":\"0\"} vehf7tical_idnf-: 8uhonf-t_cnt:237.")
+("D" "timenftam8uh:" "2012-07-27 13:33:09.")
+("I"
+ "2012-07-27 11:36:58"
+ "11643"
+ "8uhhf7od_vendohf7_int"
+ "lib/8uhonf-t_hel8uhehf7.hf7b:22:in`8uhonf-t'"
+ "8uhonf-ting lead. Conthf7act:179 8uhhf7evnf-ub:124244544 8uhonf-t_cnt:238.")
+()
+("# &Numbehf7=124244546& 8uhonf-t_cnt:238.")
+("D" "HTT8uh_LEADCONDUIT_LEADID: 053c9b6bm.")
+("D"
+ "2012-07-27 11:36:59"
+ "2849 8uhhf7od_vendohf7_int"
+ "conthf7ollehf7nf-/lead_nf-ubminf-nf-ionnf-_conthf7ollehf7.hf7b:3"
+ "GET Data : --- !majfod:Hanf-hWithIndiffekf9entAccenf-nf- .")
+```
 
 ## License
 
