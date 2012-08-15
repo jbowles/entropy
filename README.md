@@ -17,7 +17,10 @@ Using OpenNLP, Clojure, and clojure-opennlp, incanter.
 See the training directory (a private repo) for information on how training sets were created. These training sets were used to generate the binary model files.
 
 ## Examples
-Finally getting the correct models working. The goal here is to take unstructred log data and parse it. The models are being trained so as not to anticipate log formatting that conforms with the parsing logic. The examples below provide lists that consume strings; this is only for exhibition. In reality we would be streaming text files either real-time or after the fact and persisting portions of the parsed text to a queryabe cache (soon I'll be saving parsed log data to PostGres and expect to provide Mongo ro Riak support soon after).
+Finally getting the correct models working. The goal here is to take unstructred log data and parse it. 
+The models are being trained so as not to anticipate log formatting that conforms with the parsing logic. 
+The examples below provide lists that consume strings; this is only for exhibition. 
+In reality we would be streaming text files either real-time or after the fact and persisting portions of the parsed text to a queryable cache (soon I'll be saving parsed log data to PostGres and expect to provide Mongo ro Riak support soon after).
 
 ### Sentences
 Parsing senteces on unstructured log data; I added a period to each line end to facilitate parsing.
@@ -92,7 +95,7 @@ Also got tokenization working on unstructured log data.
 ]
 ```
 ## Named Entity Recognition
-Extraction of named entities is broad; I defined a whole bunch of stuff as an entity without any semantic intepretation. For now, it is abroad brush.
+Extraction of named entities is broad; I defined a whole bunch of stuff as an entity without any semantic intepretation. For now, it is a broad brush.
 
 ```clj
 ;; function to process lines of a file
